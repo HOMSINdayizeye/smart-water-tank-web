@@ -31,18 +31,39 @@ public function login(Request $request)
     $role = $credentials['role'];
     unset($credentials['role']);
 
-    if (!Auth::attempt($credentials)) {
-        \Log::error('Login failed for email: ' . $credentials['email']);
+    // First check if user exists
+    $user = User::where('email', $credentials['email'])->first();
+    
+    if (!$user) {
+        \Log::error('Login failed: User not found with email: ' . $credentials['email']);
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->withInput();
     }
 
-    if (Auth::user()->role !== $role) {
+    // Then attempt authentication
+    if (!Auth::attempt($credentials)) {
+        \Log::error('Login failed: Invalid password for email: ' . $credentials['email']);
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->withInput();
+    }
+
+    // Check role
+    if ($user->role !== $role) {
         Auth::logout();
-        \Log::error('Role mismatch: Expected ' . $role . ' but found ' . Auth::user()->role);
+        \Log::error('Role mismatch: Expected ' . $role . ' but found ' . $user->role);
         return back()->withErrors([
             'role' => 'You do not have access as ' . $role,
+        ])->withInput();
+    }
+
+    // For clients, ensure they have a tank
+    if ($role === 'client' && !$user->tank) {
+        Auth::logout();
+        \Log::error('Client has no tank assigned: ' . $user->email);
+        return back()->withErrors([
+            'email' => 'Your account is not properly set up. Please contact your administrator.',
         ])->withInput();
     }
 

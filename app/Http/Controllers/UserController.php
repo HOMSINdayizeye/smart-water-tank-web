@@ -14,9 +14,16 @@ class UserController extends Controller {
     /**
      * Display a listing of the users
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $query = User::query();
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->paginate(10);
+
         return view('users.index', compact('users'));
     }
 
@@ -39,6 +46,14 @@ class UserController extends Controller {
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:admin,agent,client'],
+            'is_active' => ['required', 'boolean'],
+            'location' => ['required_if:role,client', 'string', 'max:255'],
+            'capacity' => ['required_if:role,client', 'numeric', 'min:1'],
+            'current_level' => ['required_if:role,client', 'numeric', 'min:0'],
+            'ph_level' => ['required_if:role,client', 'numeric', 'min:0', 'max:14'],
+            'chloride_level' => ['required_if:role,client', 'numeric', 'min:0'],
+            'fluoride_level' => ['required_if:role,client', 'numeric', 'min:0'],
+            'nitrate_level' => ['required_if:role,client', 'numeric', 'min:0'],
         ]);
 
         $user = User::create([
@@ -46,6 +61,7 @@ class UserController extends Controller {
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'is_active' => $request->is_active,
             'created_by' => Auth::id(),
         ]);
 
@@ -87,12 +103,14 @@ class UserController extends Controller {
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:admin,agent,client'],
+            'is_active' => ['required', 'boolean'],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'is_active' => $request->is_active,
         ]);
 
         if ($request->filled('password')) {
@@ -176,5 +194,13 @@ class UserController extends Controller {
         ]);
 
         return redirect()->route('agent.clients')->with('success', 'Client created successfully');
+    }
+
+    /**
+     * Display the specified user
+     */
+    public function show(User $user)
+    {
+        return view('users.show', compact('user'));
     }
 }

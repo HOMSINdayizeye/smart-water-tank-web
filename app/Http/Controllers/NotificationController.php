@@ -120,18 +120,30 @@ class NotificationController extends Controller {
     }
 
     /**
+     * Show the form for sending a notification to an admin.
+     */
+    public function showSendToAdminForm()
+    {
+        // Optionally, you could fetch a list of admins here to pass to the view
+        // $admins = User::where('role', 'admin')->get();
+        return view('agent.send-notification-to-admin');
+    }
+
+    /**
      * Agent sends request to admin
      */
     public function requestToAdmin(Request $request)
     {
         $request->validate([
-            'admin_id' => ['required', 'exists:users,id'],
+            'admin_email' => ['required', 'string', 'email', 'exists:users,email'],
             'title' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string'],
         ]);
 
+        // Find the admin user by email
+        $admin = User::where('email', $request->admin_email)->first();
+
         // Verify the receiver is an admin
-        $admin = User::find($request->admin_id);
         if (!$admin || $admin->role !== 'admin') {
             return redirect()->back()->with('error', 'Invalid admin selected.');
         }
@@ -145,5 +157,17 @@ class NotificationController extends Controller {
         ]);
 
         return redirect()->back()->with('success', 'Request sent to admin');
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllAsRead()
+    {
+        Notification::where('receiver_id', Auth::id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+        
+        return redirect()->back()->with('success', 'All notifications marked as read');
     }
 }

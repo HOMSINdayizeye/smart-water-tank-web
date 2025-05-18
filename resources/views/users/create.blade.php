@@ -88,14 +88,57 @@
             
             <div id="client-fields" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" style="display: none;">
                 <div>
-                    <label for="agent_id" class="block text-sm font-medium text-gray-700 mb-1">Assign Agent</label>
-                    <select name="agent_id" id="agent_id" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                        <option value="">Select Agent</option>
-                        @foreach(\App\Models\User::where('role', 'agent')->where('is_active', true)->get() as $agent)
-                            <option value="{{ $agent->id }}" {{ old('agent_id') == $agent->id ? 'selected' : '' }}>{{ $agent->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('agent_id')
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Tank Location</label>
+                    <input type="text" name="location" id="location" value="{{ old('location') }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('location')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="capacity" class="block text-sm font-medium text-gray-700 mb-1">Tank Capacity (liters)</label>
+                    <input type="number" name="capacity" id="capacity" value="{{ old('capacity', 1000) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('capacity')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="current_level" class="block text-sm font-medium text-gray-700 mb-1">Current Water Level (liters)</label>
+                    <input type="number" name="current_level" id="current_level" value="{{ old('current_level', 500) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('current_level')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="ph_level" class="block text-sm font-medium text-gray-700 mb-1">pH Level</label>
+                    <input type="number" step="0.1" name="ph_level" id="ph_level" value="{{ old('ph_level', 7.0) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('ph_level')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="chloride_level" class="block text-sm font-medium text-gray-700 mb-1">Chloride Level (mg/L)</label>
+                    <input type="number" name="chloride_level" id="chloride_level" value="{{ old('chloride_level', 200) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('chloride_level')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="fluoride_level" class="block text-sm font-medium text-gray-700 mb-1">Fluoride Level (mg/L)</label>
+                    <input type="number" step="0.1" name="fluoride_level" id="fluoride_level" value="{{ old('fluoride_level', 1.0) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('fluoride_level')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="nitrate_level" class="block text-sm font-medium text-gray-700 mb-1">Nitrate Level (mg/L)</label>
+                    <input type="number" name="nitrate_level" id="nitrate_level" value="{{ old('nitrate_level', 40) }}" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" required>
+                    @error('nitrate_level')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -116,13 +159,21 @@
         function toggleClientFields() {
             if (roleSelect.value === 'client') {
                 clientFields.style.display = 'grid';
+                // Make tank fields required when client is selected
+                clientFields.querySelectorAll('input').forEach(input => {
+                    input.required = true;
+                });
             } else {
                 clientFields.style.display = 'none';
+                // Remove required attribute when client is not selected
+                clientFields.querySelectorAll('input').forEach(input => {
+                    input.required = false;
+                });
             }
         }
         
         roleSelect.addEventListener('change', toggleClientFields);
-        toggleClientFields();
+        toggleClientFields(); // Run on page load
     });
 </script>
 @endsection
