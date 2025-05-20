@@ -28,6 +28,7 @@ class DashboardController extends Controller
                 $maintenanceRequests = Notification::where('receiver_id', $user->id)
                     ->where('type', 'maintenance')
                     ->count();
+                    
                 
                 return view('admin', compact(
                     'user', 

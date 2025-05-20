@@ -1,13 +1,94 @@
 @extends('layouts.app')
 
 @section('content')
+
+
+<style>
+    .bg-white {
+        width: 50%;
+        margin: auto;
+        padding: 20px;
+        background-color: #f5f5f5; /* Light grey background */
+        border-radius: 12px;
+        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .p-6 {
+        padding: 24px;
+    }
+
+    .grid-cols-1, .md\:grid-cols-2 {
+        display: grid;
+        gap: 20px; /* Increased spacing between fields */
+        row-gap: 30px;
+
+    }
+
+    @media (min-width: 768px) {
+        .md\:grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #bbb; /* Darker border */
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+        background-color: #fff;
+        
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+    }
+
+    .text-red-500 {
+        color: red;
+        font-size: 12px;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center; /* Centers the button */
+        margin-top: 20px;
+    }
+
+    .bg-blue-500 {
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+        width: fit-content;
+    }
+
+    .bg-blue-500:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+
 <div class="p-4">
     <div class="flex items-center mb-6">
-        <a href="{{ route('users.index') }}" class="mr-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-        </a>
+           <a href="{{ route('users.index') }}" class="mr-2" 
+   style="display: block; width: fit-content; 
+   padding: 10px; border: 2px solid skyblue;
+    background-color: lightblue; text-decoration: none;
+     position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);">
+    Dashboard
+</a>
         <h1 class="text-2xl font-bold">Edit User: {{ $user->name }}</h1>
     </div>
     

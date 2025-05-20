@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="p-4">
     <div class="flex justify-between items-center mb-6">
+        {{-- Home Button --}}
+        
         <h1 class="text-2xl font-bold">Admin Dashboard</h1>
         <a href="{{ route('users.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Create New User</a>
     </div>
@@ -95,58 +98,250 @@
                 </div>
             </div>
         </div>
+
+
+<style>
+    body {
+        background: #f8fafc;
+        margin: 0;
+        padding: 0;
+        font-family: 'Figtree', sans-serif;
+        overflow-x: hidden;
+    }
+
+    .admin-layout-container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-left-bar {
+        width: 100px;
+        background-color: #0ea5e9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 1.5rem;
+        box-sizing: border-box;
+        flex-shrink: 0;
+    }
+
+    .admin-home-icon-container {
+        background-color: #2563eb;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+    }
+
+    .admin-home-icon-container:hover {
+        background-color: #1e40af;
+    }
+
+    .admin-sidebar {
+        width: 280px;
+        background: #e2e8f0;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 250px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+    }
+
+    .profile-icon {
+        width: 80px;
+        height: 80px;
+        background: #cbd5e1;
+        border-radius: 50%;
+        margin-bottom: 1.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #475569;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-title {
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+        color: #1e293b;
+        text-transform: uppercase;
+    }
+
+    .sidebar-menu {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: #475569;
+        font-size: 1.05rem;
+        transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .sidebar-menu li:last-child {
+        margin-bottom: 0;
+    }
+
+    .sidebar-menu li a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0.6rem 0.8rem;
+        border-radius: 0.375rem;
+        gap: 1rem;
+    }
+
+    .sidebar-menu li a:hover {
+        background-color: #d1d5db;
+        color: #1e293b;
+    }
+
+    .sidebar-menu li.highlight a {
+        background-color: #bfdbfe;
+        color: #1e3a8a;
+        font-weight: 600;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 4rem;
+        background: #f8fafc;
+        overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+        .admin-layout-container {
+            flex-direction: column;
+        }
+
+        .admin-left-bar {
+            width: 100%;
+            height: 60px;
+            flex-direction: row;
+            padding: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            padding-top: 0;
+        }
+
+        .admin-sidebar {
+            width: 100%;
+            margin: 0.5rem 0;
+            min-width: 0;
+            align-items: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar-menu li {
+            justify-content: center;
+            margin-bottom: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .admin-left-bar {
+            height: 50px;
+            padding: 0.4rem;
+        }
+
+        .admin-sidebar {
+            padding: 1rem 0.5rem;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.6rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="admin-layout-container">
+    <!-- Left Blue Bar with Home Icon -->
+    <div class="admin-left-bar">
+        <a href="{{ route('dashboard') }}" class="admin-home-icon-container">
+            <i class="fas fa-home"></i>
+        </a>
+
     </div>
-    
-    <!-- Recent Users & Notifications -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">Recent Users</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach(\App\Models\User::latest()->take(5)->get() as $user)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 
-                                       ($user->role === 'agent' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
-                                    {{ ucfirst($user->role) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="profile-icon">
+            <i class="fas fa-user-shield"></i>
         </div>
-        
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">Recent Notifications</h2>
-            <div class="space-y-4">
-                @foreach(\App\Models\Notification::latest()->take(5)->get() as $notification)
-                <div class="border-l-4 border-blue-500 pl-4 py-2">
-                    <div class="flex justify-between">
-                        <h3 class="font-semibold">{{ $notification->title }}</h3>
-                        <span class="text-sm text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
-                    </div>
-                    <p class="text-sm text-gray-600 truncate">{{ $notification->message }}</p>
-                    <div class="mt-1 flex items-center gap-2">
-                        <span class="text-xs text-gray-500">From: {{ $notification->sender->name }}</span>
-                        <span class="text-xs text-gray-500">To: {{ $notification->receiver->name }}</span>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
+        <div class="sidebar-title">ADMIN PROFILE</div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{ route('users.index') }}">
+                    <i class="fas fa-users"></i>
+                    User Management
+                </a>
+            </li>
+            <li class="highlight">
+                <a href="{{ route('permissions.index') }}">
+                    <i class="fas fa-lock"></i>
+                    Optimizing System Performance
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('tanks.index') }}">
+                    <i class="fas fa-chart-line"></i>
+                    Monitoring System Health
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('notifications.index') }}">
+                    <i class="fas fa-bell"></i>
+                    Reviewing Alerts & Reports
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        @yield('admin-content')
     </div>
 </div>
+
+
+{{-- Fixed top-left Home button (Icon) --}}
+<div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <a href="{{ route('dashboard') }}" style="display: flex; items-center justify-center; width: 40px; height: 40px; background-color: #0284c7; border-radius: 50%;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.736-8.736a2.25 2.25 0 013.182 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+    </a>
+</div>
+
+{{-- Fixed bottom-left logout button --}}
+<div style="position: fixed; bottom: 20px; left: 20px;">
+    <form action="{{ route('logout') }}" method="POST" class="inline">
+        @csrf
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">Logout</button>
+    </form>
+</div>
+
 @endsection

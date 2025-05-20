@@ -8,28 +8,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller {
 
     /**
      * Display a listing of the users
      */
-    public function index(Request $request)
-    {
-        $query = User::query();
 
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
+public function index(Request $request)
+{
+    $query = User::query();
 
-        $users = $query->paginate(10);
-
-        return view('users.index', compact('users'));
+    if ($request->has('role') && !empty($request->role)) {
+        $query->where('role', $request->role);
     }
 
-    /**
-     * Show the form for creating a new user
-     */
+    $users = $query->paginate(10);
+
+    return view('users.index', compact('users'));
+}
+
+/**
+ * Show the form for creating a new user
+ */
     public function create()
     {
         $roles = ['admin', 'agent', 'client'];
@@ -203,4 +205,37 @@ class UserController extends Controller {
     {
         return view('users.show', compact('user'));
     }
+
+    /**
+     * Show the form for editing user permissions.
+     */
+    public function editPermissions(User $user)
+    {
+        Log::info('Accessing editPermissions for user:', ['user_id' => $user->id]);
+        $permissions = Permission::all();
+        $userPermissions = $user->permissions->pluck('id')->toArray();
+
+        Log::info('Permissions data:', [
+            'permissions_count' => $permissions->count(),
+            'user_permissions' => $userPermissions
+        ]);
+
+        return view('users.permissions', compact('user', 'permissions', 'userPermissions'));
+    }
+
+    /**
+     * Update the specified user's permissions in storage.
+     */
+    public function updatePermissions(Request $request, User $user)
+    {
+        $request->validate([
+            'permissions' => ['nullable', 'array'],
+            'permissions.*' => ['exists:permissions,id'],
+        ]);
+
+        $user->permissions()->sync($request->permissions);
+
+        return redirect()->route('users.index')->with('success', 'User permissions updated successfully');
+    }
+
 }

@@ -2,33 +2,35 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\Permission;
 
 class PermissionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
     public function run(): void
     {
-        // Create permissions
         $permissions = [
-            ['name' => 'view_users', 'description' => 'View all users'],
-            ['name' => 'create_users', 'description' => 'Create new users'],
-            ['name' => 'update_users', 'description' => 'Update user information'],
-            ['name' => 'delete_users', 'description' => 'Delete users'],
+            'create account',
+            'edit user info',
+            'delete user',
+            'view user',
+            'view all users',
+            'create tank',
+            'edit tank info',
+            'view notification',
+            'view reports',
+            'edit reports',
+            'manage alerts',
+            'view alerts',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create($permission);
-        }
-
-        // Assign all permissions to the first agent
-        $agent = User::where('role', 'agent')->first();
-        if ($agent) {
-            $agent->permissions()->attach(Permission::all());
+            Permission::firstOrCreate(['name' => $permission]);
         }
     }
 }
