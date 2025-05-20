@@ -3,111 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use App\Models\Tank;
 
 class AuthController extends Controller {
     /**
      * Show the login form
      */
-    // public function showLoginForm()
-    // {
-    //     return view('auth.login');
-    // }
     public function showLoginForm()
-{
-    return view('login'); // Change from 'auth.login' to 'login'
-}
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-        'role' => ['required', 'in:admin,agent,client'],
-    ]);
-
-    $role = $credentials['role'];
-    unset($credentials['role']);
-
-    // First check if user exists
-    $user = User::where('email', $credentials['email'])->first();
-    
-    if (!$user) {
-        \Log::error('Login failed: User not found with email: ' . $credentials['email']);
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput();
+    {
+        return view('login');
     }
-
-    // Then attempt authentication
-    if (!Auth::attempt($credentials)) {
-        \Log::error('Login failed: Invalid password for email: ' . $credentials['email']);
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput();
-    }
-
-    // Check role
-    if ($user->role !== $role) {
-        Auth::logout();
-        \Log::error('Role mismatch: Expected ' . $role . ' but found ' . $user->role);
-        return back()->withErrors([
-            'role' => 'You do not have access as ' . $role,
-        ])->withInput();
-    }
-
-    // For clients, ensure they have a tank
-    if ($role === 'client' && !$user->tank) {
-        Auth::logout();
-        \Log::error('Client has no tank assigned: ' . $user->email);
-        return back()->withErrors([
-            'email' => 'Your account is not properly set up. Please contact your administrator.',
-        ])->withInput();
-    }
-
-    $request->session()->regenerate();
-    return redirect()->intended('dashboard');
-}
-
 
     /**
-     * Handle login request
+     * Handle a login request
      */
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'email' => ['required', 'email'],
-    //         'password' => ['required'],
-    //         'role' => ['required', 'in:admin,agent,client'],
-    //     ]);
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+            'role' => ['required', 'in:admin,agent,client'],
+        ]);
 
-    //     $role = $credentials['role'];
-    //     unset($credentials['role']);
+        // Attempt to log the user in
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-    //     if (Auth::attempt($credentials)) {
-    //         // Check if user has the selected role
-    //         if (Auth::user()->role !== $role) {
-    //             Auth::logout();
-    //             return back()->withErrors([
-    //                 'role' => 'You do not have access as ' . $role,
-    //             ])->withInput();
-    //         }
+            $user = Auth::user();
 
-    //         $request->session()->regenerate();
-    //         return redirect()->intended('dashboard');
-    //     }
+            // Check if user role matches the selected role
+            if ($user->role !== $request->role) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors([
+                    'email' => 'The provided credentials do not match our records or the selected role.',
+                ])->onlyInput('email');
+            }
 
-    //     return back()->withErrors([
-    //         'email' => 'The provided credentials do not match our records.',
-    //     ])->withInput();
-    //     //debbgging to see what is the cause of invalid lpogin
-    //     if (Auth::attempt($credentials)) {
-    //         dd(Auth::user()); // See what Laravel is returning
-    //     }
-        
-    // }
+            // Redirect to intended page or dashboard based on role
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->intended(route('dashboard'));
+                case 'agent':
+                    return redirect()->intended(route('dashboard'));
+                case 'client':
+                    return redirect()->intended(route('dashboard'));
+                default:
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                    return redirect('/')->with('error', 'Your account has an invalid role.');
+            }
+        }
+
+        // If login attempt fails
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
 
     /**
      * Show the registration form
@@ -171,14 +130,16 @@ public function login(Request $request)
     }
 
     /**
-     * Handle logout request
+     * Log the user out of the application
      */
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
-        
+
         return redirect('/');
     }
 }

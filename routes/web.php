@@ -21,6 +21,9 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
+    // Logout route
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
     // Client routes
     Route::middleware([CheckRole::class.':client'])->group(function () {
         Route::post('/request-to-agent', [NotificationController::class, 'requestToAgent'])->name('client.request.agent');
@@ -40,6 +43,10 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::resource('users', UserController::class);
         Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
         Route::resource('tanks', App\Http\Controllers\TankController::class);
+        
+        // User Permissions routes
+        Route::get('/users/{user}/permissions', [UserController::class, 'editPermissions'])->name('users.permissions.edit');
+        Route::put('/users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.permissions.update');
     });
 
     // Notification routes

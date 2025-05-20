@@ -3,6 +3,8 @@
 @section('content')
 <div class="p-4">
     <div class="flex justify-between items-center mb-6">
+        {{-- Home Button --}}
+        
         <h1 class="text-2xl font-bold">Admin Dashboard</h1>
         <a href="{{ route('users.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Create New User</a>
     </div>
@@ -148,5 +150,22 @@
             </div>
         </div>
     </div>
+</div>
+
+{{-- Fixed top-left Home button (Icon) --}}
+<div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <a href="{{ route('dashboard') }}" style="display: flex; items-center justify-center; width: 40px; height: 40px; background-color: #0284c7; border-radius: 50%;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.736-8.736a2.25 2.25 0 013.182 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+    </a>
+</div>
+
+{{-- Fixed bottom-left logout button --}}
+<div style="position: fixed; bottom: 20px; left: 20px;">
+    <form action="{{ route('logout') }}" method="POST" class="inline">
+        @csrf
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">Logout</button>
+    </form>
 </div>
 @endsection

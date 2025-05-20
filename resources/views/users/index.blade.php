@@ -74,6 +74,7 @@
                                         <div class="btn-group">
                                             <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-info">View</a>
                                             <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ route('users.permissions.edit', $user) }}" class="btn btn-sm btn-secondary">Permissions</a>
                                             <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')

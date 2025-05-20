@@ -3,6 +3,7 @@
 @section('content')
 <div class="dashboard-container">
     <h1 class="dashboard-title">Agent Dashboard</h1>
+    {{-- Logout Button --}}
     
     <div class="stats-grid">
         <div class="stat-card">
@@ -122,6 +123,14 @@
                 <a href="{{ route('agent.notifications.send_to_admin_form') }}" class="add-button">Send Notification to Admin</a>
             </div>
         </div>
+    </div>
+
+    {{-- Fixed bottom-left logout button --}}
+    <div style="position: fixed; bottom: 20px; left: 20px;">
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="add-button">Logout</button>
+        </form>
     </div>
 </div>
 @endsection
